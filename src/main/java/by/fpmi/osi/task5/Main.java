@@ -16,15 +16,13 @@ public class Main {
     public static void main(String[] args)  {
 
         for (int i = 0; i < PRODUCERS_COUNT; i++) {
+            ExecutorService service = Executors.newFixedThreadPool(2);
             Queue<List<Integer>>resource = new ArrayDeque<>();
             Consumer consumer = new Consumer(resource);
             Producer producer = new Producer(resource, ITERATIONS, DELAY_SECONDS, Collections.singletonList(consumer));
-
-            Thread tProducer = new Thread(producer);
-            Thread tConsumer = new Thread(consumer);
-
-            tProducer.start();
-            tConsumer.start();
+            service.execute(consumer);
+            service.execute(producer);
+            service.shutdown();
         }
 
     }
